@@ -39,8 +39,8 @@
     <Reference Include="HttpMultipartParser, Version=2.2.4.0, Culture=neutral, PublicKeyToken=6d293681fa6c7a03, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\HttpMultipartParser.2.2.4\lib\net45\HttpMultipartParser.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    <Reference Include="Microsoft.Owin, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.Owin.4.2.2\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -86,13 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="view\svn\modify_password.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Quick.OwinMVC\Quick.OwinMVC.csproj">
-      <Project>{17f47358-c8e5-49b2-bcac-0b315f93e114}</Project>
-      <Name>Quick.OwinMVC</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="view\index.html" />
@@ -192,6 +185,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resource\images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Quick.OwinMVC\Quick.OwinMVC.csproj">
+      <Project>{17f47358-c8e5-49b2-bcac-0b315f93e114}</Project>
+      <Name>Quick.OwinMVC</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)Setting\Plugin.setting" />
 </Project>
