@@ -16,11 +16,6 @@ namespace Quick.OwinMVC.Node
         public static NodeApiMiddleware Instance { get; private set; }
         public static string Prefix = "api/";
 
-        /// <summary>
-        /// 额外的HTTP头
-        /// </summary>
-        public IDictionary<string, string> AddonHttpHeaders { get; private set; }
-
         private Encoding encoding = new UTF8Encoding(false);
 
         public NodeApiMiddleware(OwinMiddleware next = null) : base(next)
@@ -51,6 +46,12 @@ namespace Quick.OwinMVC.Node
             {
                 var currentNode = NodeManager.Instance.GetNode(nodePath);
                 var nodeMethod = currentNode?.GetMethod(req.Method);
+                if (nodeMethod == null && req.Method?.ToUpper() == "OPTIONS")
+                {
+                    nodeMethod = currentNode?.GetMethod("GET");
+                    if (nodeMethod == null)
+                        nodeMethod = currentNode?.GetMethod("POST");
+                }
                 if (nodeMethod == null)
                     return Next.Invoke(context);
 
@@ -109,11 +110,6 @@ namespace Quick.OwinMVC.Node
                 rep.Expires = new DateTimeOffset(DateTime.Now);
                 rep.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0";
                 rep.Headers["Pragma"] = "no-cache";
-                //添加额外的HTTP头
-                if (AddonHttpHeaders != null && AddonHttpHeaders.Count > 0)
-                    foreach (var header in AddonHttpHeaders)
-                        context.Response.Headers[header.Key] = header.Value;
-
                 return context.Output(encoding.GetBytes(result), true);
             }
             return Next.Invoke(context);
@@ -125,22 +121,6 @@ namespace Quick.OwinMVC.Node
         }
 
         public void Hunt(string key, string value)
-        {
-            switch (key)
-            {
-                case nameof(AddonHttpHeaders):
-                    AddonHttpHeaders = new Dictionary<string, string>();
-                    foreach (var headerKeyValue in value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        var tmpStrs = headerKeyValue.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (tmpStrs.Length < 2)
-                            continue;
-                        var headerKey = tmpStrs[0].Trim();
-                        var headerValue = string.Join(":", tmpStrs.Skip(1));
-                        AddonHttpHeaders[headerKey] = headerValue;
-                    }
-                    break;
-            }
-        }
+        { }
     }
 }

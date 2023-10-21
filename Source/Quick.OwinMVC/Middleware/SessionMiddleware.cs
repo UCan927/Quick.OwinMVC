@@ -20,6 +20,10 @@ namespace Quick.OwinMVC.Middleware
         private Int32 Expires = 10 * 60;
         //检查过期Session间隔，单位：秒。默认为10秒
         private Int32 CheckExpirePeriods = 10;
+        /// <summary>
+        /// 额外的HTTP头
+        /// </summary>
+        public IDictionary<string, string> AddonHttpHeaders { get; private set; }
 
         private static ConcurrentDictionary<String, SessionInfo> allSessionDict;
         private static Timer checkSessionExpiresTimer;
@@ -51,6 +55,18 @@ namespace Quick.OwinMVC.Middleware
                     break;
                 case nameof(CheckExpirePeriods):
                     CheckExpirePeriods = Int32.Parse(value);
+                    break;
+                case nameof(AddonHttpHeaders):
+                    AddonHttpHeaders = new Dictionary<string, string>();
+                    foreach (var headerKeyValue in value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        var tmpStrs = headerKeyValue.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (tmpStrs.Length < 2)
+                            continue;
+                        var headerKey = tmpStrs[0].Trim();
+                        var headerValue = string.Join(":", tmpStrs.Skip(1));
+                        AddonHttpHeaders[headerKey] = headerValue;
+                    }
                     break;
             }
         }
@@ -88,6 +104,20 @@ namespace Quick.OwinMVC.Middleware
 
         public override Task Invoke(IOwinContext context)
         {
+            var req = context.Request;
+            var rep = context.Response;
+
+            //添加额外的HTTP头
+            if (AddonHttpHeaders != null && AddonHttpHeaders.Count > 0)
+            {
+                foreach (var header in AddonHttpHeaders)
+                {
+                    if (rep.Headers.ContainsKey(header.Key))
+                        continue;
+                    rep.Headers[header.Key] = header.Value;
+                }
+            }
+
             //先从URL参数中获取
             var sessionId  = context.Request.Query.Get("SessionId");
             //然后从Cookie中获取
