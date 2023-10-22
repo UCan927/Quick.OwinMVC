@@ -4,7 +4,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -123,6 +122,14 @@ namespace Quick.OwinMVC.Middleware
             //然后从Cookie中获取
             if (string.IsNullOrEmpty(sessionId))
                 sessionId = context.Request.Cookies.Where(t => t.Key == IdKey).SingleOrDefault().Value;
+            if (String.IsNullOrWhiteSpace(sessionId))
+            {
+                if (context?.Request?.Headers?.TryGetValue(IdKey, out var values) == true
+                    && values != null
+                    && values.Length > 0
+                    && !String.IsNullOrWhiteSpace(values[0]))
+                    sessionId = values[0];
+            }
             SessionInfo session = null;
             if (sessionId != null)
                 allSessionDict.TryGetValue(sessionId, out session);
