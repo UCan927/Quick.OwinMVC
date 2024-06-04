@@ -202,7 +202,7 @@ namespace Quick.OwinMVC.Utils
             #endregion
         };
         private readonly static String defaultMIME = "application/octet-stream";
-        public static String DefaultMimeMapKey = $"DefaultMimeMapKey_{Guid.NewGuid():B}";
+        public readonly static String DefaultMimeMapKey = $"DefaultMimeMapKey_{Guid.NewGuid():B}";
 
         static MimeUtils()
         {
