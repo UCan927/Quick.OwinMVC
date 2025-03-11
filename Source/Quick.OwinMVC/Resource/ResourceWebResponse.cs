@@ -10,6 +10,8 @@ namespace Quick.OwinMVC.Resource
 {
     public class ResourceWebResponse : WebResponse
     {
+        private static String baseDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location).ToLower();
+
         private Uri uri;
         private FileInfo fileInfo;
         private ManifestResourceInfo resourceInfo;
@@ -55,7 +57,8 @@ namespace Quick.OwinMVC.Resource
                 if (fullFilePath != null)
                     break;
             }
-            if (fullFilePath != null)
+            if (fullFilePath != null
+                && Path.GetFullPath(fullFilePath).ToLower().StartsWith(baseDir))
                 fileInfo = new FileInfo(fullFilePath);
             else if (pluginName == ".") { }
             else
